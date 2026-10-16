@@ -1,0 +1,4 @@
+#!/bin/bash -p
+# Installs the thimble scripts and the launchd job for the founder (#2).
+# Placeholder with the agreed interface; behaviour comes after the tests are reviewed.
+exit 0
