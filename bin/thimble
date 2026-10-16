@@ -3,5 +3,5 @@
 # Placeholder with the agreed interface; behaviour comes after the tests are reviewed.
 case "${1:-}" in
   mint|refresh|zshenv) exit 0 ;;
-  *) echo "usage: thimble mint <app folder> | refresh [root] | zshenv [root]" >&2; exit 2 ;;
+  *) echo "usage: thimble mint <app folder> [root] | refresh [root] | zshenv [root]" >&2; exit 2 ;;
 esac
