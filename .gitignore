@@ -1,0 +1,6 @@
+# macOS
+.DS_Store
+
+# Secrets: never commit a private key or a minted token
+*.pem
+token
