@@ -1,0 +1,46 @@
+# Runs Thimble's tests on pull requests into main and on pushes to main (#2).
+#
+# Thimble uses only what macOS ships, so the job runs the tests with /usr/bin/python3
+# rather than a runner-installed Python, and the tests use /usr/bin/openssl (LibreSSL)
+# rather than the Homebrew OpenSSL that comes first on the runner's PATH.
+
+name: Tests
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches: [main]
+
+# A newer run for the same pull request cancels the one in progress. Runs on main are
+# never cancelled.
+concurrency:
+  group: tests-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  macos:
+    name: Test on macOS
+    # Draft pull requests skip the job until they are marked ready for review. Tests are
+    # written first and stay red on purpose until the implementation lands.
+    if: github.event_name == 'push' || github.event.pull_request.draft == false
+    runs-on: macos-26
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Show tool versions
+        run: |
+          /usr/bin/python3 --version
+          /usr/bin/openssl version
+          /bin/zsh --version
+          /bin/bash --version | head -1
+
+      - name: Test
+        run: /usr/bin/python3 -I tests/test_thimble.py -v
